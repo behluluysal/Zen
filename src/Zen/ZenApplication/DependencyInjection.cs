@@ -24,6 +24,17 @@ namespace Zen.Application.DependencyInjection
 
     public static class ApplicationServiceBuilder
     {
+        /// <summary>
+        /// Configures and registers application-level services such as AutoMapper, FluentValidation, 
+        /// and MediatR based on the provided setup options. Validates the configuration before applying.
+        /// </summary>
+        /// <param name="builder">The application host builder.</param>
+        /// <param name="configureOptions">A delegate to configure <see cref="ApplicationSetupOptions"/>.</param>
+        /// <returns>The modified <see cref="IHostApplicationBuilder"/> instance.</returns>
+        /// <exception cref="InvalidOperationException">
+        /// Thrown if the provided options are invalid or missing required values.
+        /// </exception>
+
         public static IHostApplicationBuilder AddZenApplication(this IHostApplicationBuilder builder,
             Action<ApplicationSetupOptions> configureOptions)
         {
