@@ -1,4 +1,4 @@
-﻿using Zen.Application.Utilities.Common;
+﻿using Zen.Application.MediatR.Common;
 
 namespace Zen.Application.MediatR.Command;
 
@@ -12,5 +12,5 @@ public interface ICommand { }
 /// </summary>
 public interface ICommandHandler<TCommand> where TCommand : ICommand
 {
-    Task<OperationResult> HandleAsync(TCommand command, CancellationToken cancellationToken = default);
+    Task<ZenOperationResult> HandleAsync(TCommand command, CancellationToken cancellationToken = default);
 }

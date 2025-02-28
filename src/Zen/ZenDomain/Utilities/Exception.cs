@@ -5,7 +5,7 @@
 /// Represents a domain exception with an associated error code.
 /// This interface can be implemented by custom exceptions thrown from domain logic.
 /// </summary>
-public interface IDomainException
+public interface IZenDomainException
 {
     int ErrorCode { get; }
     string Message { get; }
@@ -14,7 +14,7 @@ public interface IDomainException
 /// <summary>
 /// Base domain exception with an error code.
 /// </summary>
-public abstract class DomainException(string message, int errorCode) : Exception(message), IDomainException
+public abstract class ZenDomainException(string message, int errorCode) : Exception(message), IZenDomainException
 {
     public int ErrorCode { get; } = errorCode;
 }

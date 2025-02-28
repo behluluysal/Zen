@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Reflection;
+using Zen.Domain;
 using Zen.Domain.Utilities;
 using Zen.Infrastructure.Data.Security;
 
@@ -39,6 +40,13 @@ public abstract class ZenDbContext(DbContextOptions options) : DbContext(options
                         propertyBuilder.HasConversion(converter);
                         propertyBuilder.HasColumnType("nvarchar(max)");
                     }
+                }
+
+                if (typeof(IConcurrencyAware).IsAssignableFrom(entity.ClrType))
+                {
+                    modelBuilder.Entity(entity.ClrType)
+                        .Property("RowVersion")
+                        .IsRowVersion();
                 }
             }
         }

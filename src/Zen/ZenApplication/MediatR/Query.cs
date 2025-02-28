@@ -1,4 +1,4 @@
-﻿using Zen.Application.Utilities.Common;
+﻿using Zen.Application.MediatR.Common;
 
 namespace Zen.Application.MediatR.Query;
 
@@ -13,5 +13,5 @@ public interface IQuery<TResult> { }
 /// </summary>
 public interface IQueryHandler<TQuery, TResult> where TQuery : IQuery<TResult>
 {
-    Task<OperationResult<TResult>> HandleAsync(TQuery query, CancellationToken cancellationToken = default);
+    Task<ZenOperationResult<TResult>> HandleAsync(TQuery query, CancellationToken cancellationToken = default);
 }

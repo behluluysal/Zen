@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using Zen.Application.Utilities.Exception;
 using Zen.Application.Utilities.Transaction;
 
 namespace Zen.Infrastructure.Data;
@@ -27,15 +28,24 @@ public class EfUnitOfWork<TContext>(TContext context) : IUnitOfWork where TConte
     /// </summary>
     public async Task CommitAsync(CancellationToken cancellationToken = default)
     {
-        // Save the changes to the database.
-        await _context.SaveChangesAsync(cancellationToken);
-
-        if (_transaction != null)
+        try
         {
-            await _transaction.CommitAsync(cancellationToken);
-            await _transaction.DisposeAsync();
-            _transaction = null;
+            // Save the changes to the database.
+            await _context.SaveChangesAsync(cancellationToken);
+
+            if (_transaction != null)
+            {
+                await _transaction.CommitAsync(cancellationToken);
+                await _transaction.DisposeAsync();
+                _transaction = null;
+            }
         }
+        catch (DbUpdateConcurrencyException ex)
+        {
+            await RollbackAsync(cancellationToken);
+            throw new ZenDbUpdateConcurrencyException(ex.Message);
+        }
+        
     }
 
     /// <summary>
