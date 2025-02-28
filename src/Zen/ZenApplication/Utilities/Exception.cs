@@ -4,7 +4,7 @@
 /// Represents a domain exception with an associated error code.
 /// This interface can be implemented by custom exceptions thrown from application logic.
 /// </summary>
-public interface IApplicationException
+public interface IZebApplicationException
 {
     int ErrorCode { get; }
     string Message { get; }
@@ -13,7 +13,11 @@ public interface IApplicationException
 /// <summary>
 /// Base application exception with an error code.
 /// </summary>
-public abstract class ApplicationException(string message, int errorCode) : System.Exception(message), IApplicationException
+public abstract class ZenApplicationException(string message, int errorCode) : System.Exception(message), IZebApplicationException
 {
     public int ErrorCode { get; } = errorCode;
+}
+
+public class ZenDbUpdateConcurrencyException(string message) : ZenApplicationException(message, 409)
+{
 }

@@ -7,8 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.1" />
-    
 	  <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.2">
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -17,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Aspire\Zen.ServiceDefaults\Zen.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\..\..\Zen\ZenAPI\Zen.API.csproj" />
     <ProjectReference Include="..\Zen.Services.Coupon.Infrastructure\Zen.Services.Coupon.Infrastructure.csproj" />
   </ItemGroup>
 

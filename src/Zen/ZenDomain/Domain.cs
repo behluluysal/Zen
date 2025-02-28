@@ -18,7 +18,6 @@ public interface IAggregateRoot { }
 
 ///// <summary>
 ///// Indicates that an entity has inline audit information.
-///// This is useful if you need quick access to audit data.
 ///// </summary>
 //public interface IAuditable
 //{
@@ -51,7 +50,6 @@ public interface IConcurrencyAware
 
 /// <summary>
 /// Repository interface for aggregate roots.
-/// This abstraction lets the domain layer remain decoupled from data access details.
 /// </summary>
 /// <typeparam name="T">
 /// The type of the aggregate root.
@@ -65,3 +63,15 @@ public interface IRepository<T> where T : IIdentifiable<string>, IAggregateRoot
     Task DeleteAsync(T entity, CancellationToken cancellationToken = default);
 }
 
+
+/// <summary>
+/// Repository interface for entities that support optimistic concurrency.
+/// </summary>
+/// <typeparam name="T">The aggregate type which must implement IConcurrencyAware.</typeparam>
+public interface IConcurrencyAwareRepository<T> where T : IIdentifiable<string>, IAggregateRoot, IConcurrencyAware
+{
+    Task<T?> GetByIdAsync(string id, CancellationToken cancellationToken = default);
+    Task AddAsync(T entity, CancellationToken cancellationToken = default);
+    Task UpdateAsync(T entity, byte[] originalRowVersion, CancellationToken cancellationToken = default);
+    Task DeleteAsync(T entity, CancellationToken cancellationToken = default);
+}

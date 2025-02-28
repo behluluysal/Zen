@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
+using Zen.API.Models;
 
 namespace Zen.API.Middleware;
 
@@ -44,28 +45,11 @@ public class GlobalExceptionHandlingMiddleware(RequestDelegate next, ILogger<Glo
             errorMessage = exception.Message;
         }
 
-        var response = new ApiResponse<object>
-        {
-            Success = false,
-            ErrorCode = statusCode,
-            ErrorMessage = errorMessage,
-            Data = null
-        };
+        var response = new ZenApiResponse<object>(new(statusCode, errorMessage));
 
         context.Response.ContentType = "application/json";
         context.Response.StatusCode = statusCode;
         var json = JsonConvert.SerializeObject(response);
         return context.Response.WriteAsync(json);
     }
-}
-
-/// <summary>
-/// A standard API response wrapper.
-/// </summary>
-public class ApiResponse<T>
-{
-    public bool Success { get; set; }
-    public int ErrorCode { get; set; }
-    public string ErrorMessage { get; set; }
-    public T Data { get; set; }
 }

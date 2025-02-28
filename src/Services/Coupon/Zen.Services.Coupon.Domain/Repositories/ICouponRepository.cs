@@ -2,7 +2,7 @@
 
 namespace Zen.Services.Coupon.Domain.Repositories;
 
-public interface ICouponRepository : IRepository<Entities.Coupon>
+public interface ICouponRepository : IConcurrencyAwareRepository<Entities.Coupon>
 {
     Task<IEnumerable<Entities.Coupon>> GetValidCouponsAsync(DateTime now, CancellationToken cancellationToken = default);
 }

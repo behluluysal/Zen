@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Zen.Application.Utilities.Common;
+using Zen.API.Extensions;
+using Zen.API.Models;
 using Zen.Services.Coupon.Application.Dtos;
 using Zen.Services.Coupon.Application.MediatR.Coupon;
 
@@ -8,31 +9,35 @@ namespace Zen.Services.Coupon.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class CouponController : ControllerBase
+public class CouponController(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator _mediator;
-
-    public CouponController(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
+    private readonly IMediator _mediator = mediator;
 
     [HttpPost]
-    public async Task<ActionResult<OperationResult<CouponDto>>> CreateCoupon([FromBody] CreateCouponCommand command)
+    public async Task<ActionResult<ZenApiResponse<string>>> CreateCoupon([FromBody] CreateCouponCommand command)
     {
-        var result = await _mediator.Send(command);
-        if (result.IsSuccess)
-            return Ok(result);
-        return BadRequest(result);
+        var operationResult = await _mediator.Send(command);
+        return operationResult.ToCreatedAtAction(this, nameof(GetCoupon), new { couponId = operationResult.Data });
     }
 
     [HttpGet("{couponId}")]
-    public async Task<ActionResult<OperationResult<CouponDto>>> GetCoupon(string couponId)
+    public async Task<ActionResult<ZenApiResponse<CouponDto>>> GetCoupon(string couponId)
     {
-        var query = new GetCouponByIdQuery(couponId);
-        var result = await _mediator.Send(query);
-        if (result.IsSuccess)
-            return Ok(result);
-        return NotFound(result);
+        var result = await _mediator.Send(new GetCouponByIdQuery(couponId));
+        return result.ToOk(this);
     }
+
+    [HttpPut("{id}")]
+    public async Task<ActionResult<ZenApiResponse>> UpdateCoupon(string id, [FromBody] UpdateCouponCommand command)
+    {
+        if (id != command.Id)
+        {
+            return BadRequest("ID mismatch between URL and command.");
+        }
+
+        var result = await _mediator.Send(command);
+        return result.ToNoContent(this);
+    }
+
+
 }
