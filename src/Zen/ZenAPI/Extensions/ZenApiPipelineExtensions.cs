@@ -1,8 +1,11 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Hangfire;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Zen.API.HangFire;
+using Zen.Infrastructure.BackgroundJobs;
 using Zen.Infrastructure.Data;
 
 namespace Zen.API.Extensions;
@@ -14,8 +17,12 @@ public static class ZenApiPipelineExtensions
     /// </summary>
     /// <param name="app">The application builder.</param>
     /// <returns>The updated application builder.</returns>
-    public static IApplicationBuilder UseZenApiPipeline<TDbContext>(this WebApplication app) where TDbContext : ZenDbContext
+    public static IApplicationBuilder UseZenApiPipeline<TDbContext>(this WebApplication app) 
+        where TDbContext : DbContext, IZenDbContext
     {
+        var jobs = app.Services.GetRequiredService<ZenJobScheduler<TDbContext>>();
+        jobs.ScheduleRecurringJobs();
+
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
@@ -40,6 +47,12 @@ public static class ZenApiPipelineExtensions
         {
             _db.Database.Migrate();
         }
+
+        app.UseHangfireDashboard("/jobs", new DashboardOptions
+        {
+            Authorization = [new HangfireDashboardAuthorizationFilter()],
+            AsyncAuthorization = [new HangfireDashboardAsyncAuthorizationFilter()]
+        });
 
         return app;
     }

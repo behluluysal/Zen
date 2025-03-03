@@ -1,8 +1,12 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Hangfire;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System.ComponentModel.DataAnnotations;
+using Zen.Infrastructure.BackgroundJobs;
+using Zen.Infrastructure.Data;
 
 
 namespace Zen.API.Extensions;
@@ -24,8 +28,8 @@ public static class ZenApiBuilderExtensions
     /// <param name="builder">The application host builder.</param>
     /// <param name="configureOptions">A delegate to configure <see cref="ApiBuilderOptions"/>.</param>
     /// <returns>The modified <see cref="IHostApplicationBuilder"/> instance.</returns>
-    public static IHostApplicationBuilder AddZenApiDefaults(this IHostApplicationBuilder builder,
-        Action<ApiBuilderOptions> configureOptions)
+    public static IHostApplicationBuilder AddZenApiDefaults<TDbContext>(this IHostApplicationBuilder builder,
+        Action<ApiBuilderOptions> configureOptions) where TDbContext : DbContext, IZenDbContext
     {
         ApiBuilderOptions options = new();
         configureOptions(options);
@@ -51,6 +55,14 @@ public static class ZenApiBuilderExtensions
         builder.Services.AddControllers();
         // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
         builder.Services.AddOpenApi();
+
+        builder.Services.AddTransient<ZenJobScheduler<TDbContext>>();
+        builder.Services.AddHangfire(configuration => configuration
+                .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+                .UseSimpleAssemblyNameTypeSerializer()
+                .UseRecommendedSerializerSettings()
+                .UseInMemoryStorage())
+            .AddHangfireServer();
 
         return builder;
     }

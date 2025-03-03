@@ -1,7 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.Reflection;
-using Zen.Domain;
-using Zen.Domain.Utilities;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+using Zen.Domain.Outbox;
+using Zen.Infrastructure.Data.Extensions;
 using Zen.Infrastructure.Data.Security;
 
 namespace Zen.Infrastructure.Data;
@@ -11,44 +11,41 @@ namespace Zen.Infrastructure.Data;
 /// Microservices can inherit from this context to gain common configurations,
 /// such as optimistic concurrency support and shared conventions.
 /// </summary>
-public abstract class ZenDbContext(DbContextOptions options) : DbContext(options)
+public abstract class ZenDbContext(DbContextOptions options) : DbContext(options), IZenDbContext
 {
-    public static IColumnEncryptionService? ColumnEncryptionService { get; set; }
+    public static IColumnEncryptionService? StaticColumnEncryptionService { get; set; }
+    public virtual IColumnEncryptionService? ColumnEncryptionService => StaticColumnEncryptionService;
+    public DbSet<OutboxMessage> OutboxMessages { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-
-        if (ColumnEncryptionService != null)
-        {
-            foreach (var entity in modelBuilder.Model.GetEntityTypes())
-            {
-                // Find properties with the [Encrypted] attribute.
-                var properties = entity.ClrType.GetProperties()
-                    .Where(p => p.GetCustomAttribute<EncryptedAttribute>() != null);
-
-                foreach (var property in properties)
-                {
-                    var propertyBuilder = modelBuilder.Entity(entity.ClrType).Property(property.Name);
-                    if (property.PropertyType == typeof(string))
-                    {
-                        var converter = new EncryptedStringConverter(ColumnEncryptionService);
-                        propertyBuilder.HasConversion(converter);
-                    }
-                    else if (property.PropertyType == typeof(decimal))
-                    {
-                        var converter = new EncryptedDecimalConverter(ColumnEncryptionService);
-                        propertyBuilder.HasConversion(converter);
-                        propertyBuilder.HasColumnType("nvarchar(max)");
-                    }
-                }
-
-                if (typeof(IConcurrencyAware).IsAssignableFrom(entity.ClrType))
-                {
-                    modelBuilder.Entity(entity.ClrType)
-                        .Property("RowVersion")
-                        .IsRowVersion();
-                }
-            }
-        }
+        modelBuilder.ConfigureZenModel(ColumnEncryptionService);
     }
+}
+
+/// <summary>
+/// A base IdentityDbContext for Zen applications.
+/// This class extends IdentityDbContext to include common configurations,
+/// such as encryption for sensitive properties and optimistic concurrency support.
+/// Microservices handling authentication can inherit from this context.
+/// </summary>
+/// <typeparam name="TUser">The type of the user entity.</typeparam>
+public abstract class ZenIdentityDbContext(DbContextOptions options) : IdentityDbContext(options), IZenDbContext
+{
+    public static IColumnEncryptionService? StaticColumnEncryptionService { get; set; }
+    public virtual IColumnEncryptionService? ColumnEncryptionService => StaticColumnEncryptionService;
+    public DbSet<OutboxMessage> OutboxMessages { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+        modelBuilder.ConfigureZenModel(ColumnEncryptionService);
+    }
+}
+
+public interface IZenDbContext
+{
+    DbSet<OutboxMessage> OutboxMessages { get; set; }
+    IColumnEncryptionService? ColumnEncryptionService { get; }
 }

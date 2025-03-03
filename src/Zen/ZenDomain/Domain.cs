@@ -11,11 +11,6 @@ public interface IIdentifiable<T>
     T Id { get; }
 }
 
-/// <summary>
-/// Marker interface to denote an aggregate root.
-/// </summary>
-public interface IAggregateRoot { }
-
 ///// <summary>
 ///// Indicates that an entity has inline audit information.
 ///// </summary>
@@ -55,7 +50,7 @@ public interface IConcurrencyAware
 /// The type of the aggregate root.
 /// It must be identifiable by a ULID (string) and be marked as an aggregate root.
 /// </typeparam>
-public interface IRepository<T> where T : IIdentifiable<string>, IAggregateRoot
+public interface IRepository<T> where T : IIdentifiable<string>, IAggregateMember
 {
     Task<T?> GetByIdAsync(string id, CancellationToken cancellationToken = default);
     Task AddAsync(T entity, CancellationToken cancellationToken = default);
@@ -68,7 +63,7 @@ public interface IRepository<T> where T : IIdentifiable<string>, IAggregateRoot
 /// Repository interface for entities that support optimistic concurrency.
 /// </summary>
 /// <typeparam name="T">The aggregate type which must implement IConcurrencyAware.</typeparam>
-public interface IConcurrencyAwareRepository<T> where T : IIdentifiable<string>, IAggregateRoot, IConcurrencyAware
+public interface IConcurrencyAwareRepository<T> where T : IIdentifiable<string>, IAggregateMember, IConcurrencyAware
 {
     Task<T?> GetByIdAsync(string id, CancellationToken cancellationToken = default);
     Task AddAsync(T entity, CancellationToken cancellationToken = default);

@@ -4,6 +4,7 @@ using Microsoft.Extensions.Hosting;
 using System.ComponentModel.DataAnnotations;
 using Zen.Application.Utilities.Transaction;
 using Zen.Infrastructure.Data;
+using Zen.Infrastructure.Data.Interceptors;
 using Zen.Infrastructure.Data.Security;
 
 namespace Zen.Infrastructure.DependencyInjection;
@@ -39,7 +40,7 @@ public static class InfrastructureServiceBuilder
 
     public static IHostApplicationBuilder AddZenInfrastructure<TDbContext>(
         this IHostApplicationBuilder builder,
-        Action<InfrastructureSetupOptions> configureOptions) where TDbContext : ZenDbContext
+        Action<InfrastructureSetupOptions> configureOptions) where TDbContext : DbContext, IZenDbContext
     {
         var options = new InfrastructureSetupOptions();
         configureOptions(options);
@@ -52,21 +53,27 @@ public static class InfrastructureServiceBuilder
             throw new InvalidOperationException($"Invalid InfrastructureSetupOptions: {errors}");
         }
 
+        builder.Services.AddSingleton<ConvertDomainEventsToOutboxMessagesInterceptor>();
+        
         builder.ConfigureDatabase<TDbContext>(options);
 
         builder.Services.AddScoped<IUnitOfWork, EfUnitOfWork<TDbContext>>();
-        
+
         return builder;
     }
 
-    private static void ConfigureDatabase<TDbContext>(this IHostApplicationBuilder builder, InfrastructureSetupOptions options) where TDbContext : ZenDbContext
+    private static void ConfigureDatabase<TDbContext>(this IHostApplicationBuilder builder, InfrastructureSetupOptions options) where TDbContext : DbContext, IZenDbContext
     {
         builder.Services.AddSingleton<IColumnEncryptionService>(sp =>
                new AesColumnEncryptionService(options.ColumnHashingSecret));
 
         var encryptionService = builder.Services.BuildServiceProvider().GetRequiredService<IColumnEncryptionService>();
-        ZenDbContext.ColumnEncryptionService = encryptionService;
-        
+        ZenDbContext.StaticColumnEncryptionService = encryptionService;
+
+        var outboxMessageInterceptor = builder.Services.BuildServiceProvider()
+                       .GetService<ConvertDomainEventsToOutboxMessagesInterceptor>()
+                       ?? throw new ArgumentException("ConvertDomainEventsToOutboxMessagesInterceptor was null!");
+
         builder.AddSqlServerDbContext<TDbContext>(
             options.AspireDbName,
             configureDbContextOptions: opt =>
@@ -74,8 +81,18 @@ public static class InfrastructureServiceBuilder
                 opt.UseSqlServer(sqlOptions =>
                 {
                     sqlOptions.MigrationsAssembly(options.Assembly);
+                    opt.AddInterceptors(outboxMessageInterceptor);
                 });
             }
         );
+        
+        builder.Services.AddDbContextFactory<TDbContext>(opt =>
+        {
+            opt.UseSqlServer(sqlOptions =>
+            {
+                sqlOptions.MigrationsAssembly(options.Assembly);
+            });
+            opt.AddInterceptors(outboxMessageInterceptor);
+        });
     }
 }

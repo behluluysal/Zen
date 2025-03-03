@@ -1,4 +1,5 @@
 using Zen.API.Extensions;
+using Zen.ServiceDefaults;
 using Zen.Services.Coupon.Application;
 using Zen.Services.Coupon.Infrastructure;
 using Zen.Services.Coupon.Infrastructure.Data;
@@ -8,7 +9,7 @@ var configuration = builder.Configuration;
 
 builder.AddServiceDefaults();
 
-builder.AddZenApiDefaults(options =>
+builder.AddZenApiDefaults<CouponDbContext>(options =>
 {
     options.ConfigureLayers = (configuration) =>
     {

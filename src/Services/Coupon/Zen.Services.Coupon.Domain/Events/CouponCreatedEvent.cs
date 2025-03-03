@@ -1,4 +1,4 @@
-﻿using Zen.Domain.DomainEvent;
+﻿using Zen.Domain;
 
 namespace Zen.Services.Coupon.Domain.Events;
 

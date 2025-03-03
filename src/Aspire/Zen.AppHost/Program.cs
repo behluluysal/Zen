@@ -11,6 +11,7 @@ builder.AddProject<Projects.Zen_Services_Coupon_API>("zen-services-coupon-api")
     .WithReference(couponDb)
     .WaitFor(couponDb)
     .WithEnvironment("OTEL_LOGS_EXPORTER", "console")
-    .WithSwaggerUI();
+    .WithSwaggerUI()
+    .WithHangfireDashboard();
 
 builder.Build().Run();

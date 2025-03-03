@@ -1,12 +1,13 @@
-﻿namespace Zen.Domain.DomainEvent;
+﻿using MediatR;
+
+namespace Zen.Domain;
 
 /// <summary>
 /// Represents a domain event.
 /// Domain events capture important state changes or side effects in the domain.
 /// </summary>
-public interface IDomainEvent
+public interface IDomainEvent : INotification
 {
-    DateTime OccurredOn { get; }
 }
 
 /// <summary>
