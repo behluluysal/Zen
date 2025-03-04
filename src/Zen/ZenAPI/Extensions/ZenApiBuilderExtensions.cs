@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System.ComponentModel.DataAnnotations;
+using Zen.Application.Utilities.Context;
 using Zen.Infrastructure.BackgroundJobs;
 using Zen.Infrastructure.Data;
 
@@ -55,6 +56,8 @@ public static class ZenApiBuilderExtensions
         builder.Services.AddControllers();
         // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
         builder.Services.AddOpenApi();
+
+        builder.Services.AddScoped<IZenUserContext, ZenUserContext>();
 
         builder.Services.AddTransient<ZenJobScheduler<TDbContext>>();
         builder.Services.AddHangfire(configuration => configuration

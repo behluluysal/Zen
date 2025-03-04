@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Zen.Services.Coupon.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using Zen.Services.Coupon.Infrastructure.Data;
 namespace Zen.Services.Coupon.Infrastructure.Migrations
 {
     [DbContext(typeof(CouponDbContext))]
-    partial class CouponDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250304203407_AddAuditHistory")]
+    partial class AddAuditHistory
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

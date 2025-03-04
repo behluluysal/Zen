@@ -3,9 +3,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.ComponentModel.DataAnnotations;
 using Zen.Application.Utilities.Transaction;
+using Zen.Domain.Repositories;
 using Zen.Infrastructure.Data;
 using Zen.Infrastructure.Data.Interceptors;
 using Zen.Infrastructure.Data.Security;
+using Zen.Infrastructure.Repositories;
 
 namespace Zen.Infrastructure.DependencyInjection;
 
@@ -58,6 +60,8 @@ public static class InfrastructureServiceBuilder
         builder.ConfigureDatabase<TDbContext>(options);
 
         builder.Services.AddScoped<IUnitOfWork, EfUnitOfWork<TDbContext>>();
+
+        builder.Services.AddScoped<IAuditHistoryRepository, AuditHistoryRepository<TDbContext>>();
 
         return builder;
     }

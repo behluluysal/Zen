@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Zen.API.Extensions;
 using Zen.API.Models;
+using Zen.Application.Dtos;
 using Zen.Services.Coupon.Application.Dtos;
 using Zen.Services.Coupon.Application.MediatR.Coupon;
 
@@ -39,5 +40,10 @@ public class CouponController(IMediator mediator) : ControllerBase
         return result.ToNoContent(this);
     }
 
-
+    [HttpGet("{couponId}/histories")]
+    public async Task<ActionResult<ZenApiResponse<IEnumerable<AuditHistoryRecordDto>>>> GetCouponHistories(string couponId)
+    {
+        var result = await _mediator.Send(new GetCouponHistoryQuery(couponId));
+        return result.ToOk(this);
+    }
 }

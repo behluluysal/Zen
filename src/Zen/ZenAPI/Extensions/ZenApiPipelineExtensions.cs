@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Zen.API.HangFire;
+using Zen.API.Middleware;
 using Zen.Infrastructure.BackgroundJobs;
 using Zen.Infrastructure.Data;
 
@@ -33,6 +34,8 @@ public static class ZenApiPipelineExtensions
                 options.SwaggerEndpoint("/openapi/v1.json", "OpenAPI v1");
             });
         }
+
+        app.UseMiddleware<ZenUserContextMiddleware>();
 
         app.UseHttpsRedirection();
 

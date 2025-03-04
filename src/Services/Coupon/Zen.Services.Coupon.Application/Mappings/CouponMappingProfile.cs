@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Zen.Application.Dtos;
+using Zen.Domain.Utilities;
 using Zen.Services.Coupon.Application.Dtos;
 
 namespace Zen.Services.Coupon.Application.Mappings;
@@ -12,11 +14,8 @@ public class CouponMappingProfile : Profile
             .ForMember(dest => dest.RowVersion,
                 opt => opt.MapFrom(src => Convert.ToBase64String(src.RowVersion ?? Array.Empty<byte>())));
 
-        // Mapping from DTO to Entity (Write)
-        CreateMap<CouponDto, Domain.Entities.Coupon>()
-            .ConstructUsing(dto => new Domain.Entities.Coupon(dto.Code, dto.Discount, dto.Expiration))
-            .ForMember(dest => dest.Id, opt => opt.Ignore())
-            .ForMember(dest => dest.RowVersion,
-                opt => opt.MapFrom(src => Convert.FromBase64String(src.RowVersion)));
+        CreateMap<AuditHistoryRecord, AuditHistoryRecordDto>()
+                .ForMember(dest => dest.Operation,
+                    opt => opt.MapFrom(src => src.Operation.ToString()));
     }
 }

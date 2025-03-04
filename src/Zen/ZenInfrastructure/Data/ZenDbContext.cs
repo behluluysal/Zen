@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Zen.Domain.Outbox;
+using Zen.Domain.Utilities;
 using Zen.Infrastructure.Data.Extensions;
 using Zen.Infrastructure.Data.Security;
 
@@ -16,6 +17,7 @@ public abstract class ZenDbContext(DbContextOptions options) : DbContext(options
     public static IColumnEncryptionService? StaticColumnEncryptionService { get; set; }
     public virtual IColumnEncryptionService? ColumnEncryptionService => StaticColumnEncryptionService;
     public DbSet<OutboxMessage> OutboxMessages { get; set; }
+    public DbSet<AuditHistoryRecord> AuditHistoryRecords { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -36,6 +38,7 @@ public abstract class ZenIdentityDbContext(DbContextOptions options) : IdentityD
     public static IColumnEncryptionService? StaticColumnEncryptionService { get; set; }
     public virtual IColumnEncryptionService? ColumnEncryptionService => StaticColumnEncryptionService;
     public DbSet<OutboxMessage> OutboxMessages { get; set; }
+    public DbSet<AuditHistoryRecord> AuditHistoryRecords { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -47,5 +50,6 @@ public abstract class ZenIdentityDbContext(DbContextOptions options) : IdentityD
 public interface IZenDbContext
 {
     DbSet<OutboxMessage> OutboxMessages { get; set; }
+    DbSet<AuditHistoryRecord> AuditHistoryRecords { get; set; }
     IColumnEncryptionService? ColumnEncryptionService { get; }
 }

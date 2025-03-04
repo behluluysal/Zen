@@ -1,4 +1,8 @@
-﻿namespace Zen.Infrastructure.Data;
+﻿namespace Zen.Domain.Utilities;
+
+public class AuditHistoryRecord : AuditHistoryBase
+{
+}
 
 /// <summary>
 /// Defines the base properties for audit history records.
@@ -6,7 +10,7 @@
 /// </summary>
 public abstract class AuditHistoryBase
 {
-    public string HistoryId { get; set; } = Ulid.NewUlid().ToString();
+    public string Id { get; set; } = Ulid.NewUlid().ToString();
 
     public required string EntityId { get; set; }
 

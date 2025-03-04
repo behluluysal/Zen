@@ -1,27 +1,48 @@
 ﻿using Zen.Domain;
 using Zen.Domain.Utilities;
 using Zen.Services.Coupon.Domain.Events;
+using Newtonsoft.Json;
 
 namespace Zen.Services.Coupon.Domain.Entities;
 
-public class Coupon : AggregateRoot, IIdentifiable<string>, IConcurrencyAware
+public class Coupon : AggregateRoot, IIdentifiable<string>, IConcurrencyAware, IAuditable, IHasAuditHistory<AuditHistoryRecord>
 {
-    public string Id { get; private set; } = Ulid.NewUlid().ToString();
-
+    public string Id { get; private set; }
     public string Code { get; set; }
 
     [Encrypted]
     public decimal Discount { get; set; }
-
     public DateTime Expiration { get; set; }
-
     public byte[]? RowVersion { get; set; }
 
-    public Coupon(string code, decimal discount, DateTime expiration)
+    public string CreatedBy { get; private set; }
+    public DateTime CreatedDate { get; private set; }
+    public string? UpdatedBy { get; private set; }
+    public DateTime? UpdatedDate { get; private set; }
+
+    [JsonIgnore]
+    public virtual ICollection<AuditHistoryRecord> AuditHistories { get; set; } = [];
+
+    public Coupon(string code, decimal discount, DateTime expiration, string createdBy, bool raiseEvent = true)
     {
+        Id = Ulid.NewUlid().ToString();
         Code = code;
         Discount = discount;
         Expiration = expiration;
-        Raise(new CouponCreatedEvent(this));
+        CreatedBy = createdBy;
+        CreatedDate = DateTime.UtcNow;
+
+        if (raiseEvent)
+        {
+            Raise(new CouponCreatedEvent(this));
+        }
+    }
+
+    [JsonConstructor]
+    private Coupon(string id, string code, decimal discount, DateTime expiration, string createdBy, DateTime createdDate)
+            : this(code, discount, expiration, createdBy, false)
+    {
+        Id = id;
+        CreatedDate = createdDate;
     }
 }

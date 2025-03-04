@@ -57,6 +57,14 @@ internal static class ZenModelConfigurationExtensions
             entity.Property(om => om.Error).IsRequired(false);
             entity.Property(om => om.RetryCount).IsRequired();
         });
+
+        modelBuilder.Entity<AuditHistoryRecord>(entity =>
+        {
+            entity.HasKey(a => a.Id);
+            entity.Property(a => a.EntityId).IsRequired();
+            entity.Property(a => a.Snapshot).IsRequired();
+            entity.Property(a => a.ChangedBy).IsRequired();
+        });
     }
 }
 
