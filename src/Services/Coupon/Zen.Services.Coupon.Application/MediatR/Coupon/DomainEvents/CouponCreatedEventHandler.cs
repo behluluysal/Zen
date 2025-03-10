@@ -1,17 +1,15 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
-using Zen.Application.Utilities.Transaction;
-using Zen.Domain.Repositories;
-using Zen.Domain.Utilities;
+using Zen.Application.Common.Interfaces;
+using Zen.Domain.Auditing;
 using Zen.Services.Coupon.Domain.Events;
 
 namespace Zen.Services.Coupon.Application.MediatR.Coupon.DomainEvents;
 
 internal sealed class CouponCreatedEventHandler(
     ILogger<CouponCreatedEventHandler> logger,
-    IAuditHistoryRepository auditHistoryRepository,
-    IUnitOfWork unitOfWork) : INotificationHandler<CouponCreatedEvent>
+    IAuditHistoryService auditHistoryService) : INotificationHandler<CouponCreatedEvent>
 {
     public async Task Handle(CouponCreatedEvent domainEvent, CancellationToken cancellationToken)
     {
@@ -24,9 +22,7 @@ internal sealed class CouponCreatedEventHandler(
             ChangedBy = domainEvent.Coupon.CreatedBy
         };
 
-        await auditHistoryRepository.AddAsync(auditRecord, cancellationToken);
-
-        await unitOfWork.CommitAsync(cancellationToken);
+        await auditHistoryService.LogAuditAsync(auditRecord, cancellationToken);
 
         logger.LogInformation("Coupon Created Event for id: {Id} caught and processed successfully.", domainEvent.Coupon.Id);
 

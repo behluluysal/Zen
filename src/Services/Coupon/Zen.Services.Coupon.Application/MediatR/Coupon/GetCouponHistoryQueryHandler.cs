@@ -1,14 +1,14 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using Zen.Application.Common.Interfaces;
 using Zen.Application.Dtos;
 using Zen.Application.MediatR.Common;
-using Zen.Domain.Repositories;
 
 namespace Zen.Services.Coupon.Application.MediatR.Coupon;
 
 internal sealed class GetCouponHistoryQueryHandler(
-    IAuditHistoryRepository auditHistoryRepository,
+    IAuditHistoryService auditHistoryService,
     IMapper mapper,
     ILogger<GetCouponHistoryQueryHandler> logger) : IRequestHandler<GetCouponHistoryQuery, ZenOperationResult<IEnumerable<AuditHistoryRecordDto>>>
 {
@@ -16,7 +16,7 @@ internal sealed class GetCouponHistoryQueryHandler(
     {
         logger.LogInformation("Retrieving audit history for coupon id: {CouponId}", request.CouponId);
 
-        var auditRecords = await auditHistoryRepository.GetAuditHistoryAsync(request.CouponId, cancellationToken);
+        var auditRecords = await auditHistoryService.GetAuditHistoryAsync(request.CouponId, cancellationToken);
         var dtos = mapper.Map<IEnumerable<AuditHistoryRecordDto>>(auditRecords);
 
         return ZenOperationResult<IEnumerable<AuditHistoryRecordDto>>.Success(dtos);

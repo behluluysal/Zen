@@ -2,8 +2,8 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using Zen.Domain;
+using System.Text.Json;
+using Zen.Domain.Events;
 using Zen.Domain.Outbox;
 using Zen.Infrastructure.Data;
 
@@ -41,13 +41,16 @@ public class ProcessOutboxMessagesJob<TContext>(IDbContextFactory<TContext> dbCo
 
         foreach (var outboxMessage in messages)
         {
-            IDomainEvent? domainEvent = JsonConvert.DeserializeObject<IDomainEvent>(
-                outboxMessage.Content,
-                new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All });
+            Type? eventType = Type.GetType(outboxMessage.Type);
+            if (eventType == null)
+            {
+                _logger.LogError("Could not resolve event type for OutboxMessage ID: {MessageId}", outboxMessage.Id);
+                continue;
+            }
 
             outboxMessage.RetryCount++;
 
-            if (domainEvent is null)
+            if (JsonSerializer.Deserialize(outboxMessage.Content, eventType) is not IDomainEvent domainEvent)
             {
                 _logger.LogError(new Exception("Deserialization Error"),
                     "Couldn't deserialize message with ID: {MessageId}. It's like trying to read a book in the dark.", outboxMessage.Id);

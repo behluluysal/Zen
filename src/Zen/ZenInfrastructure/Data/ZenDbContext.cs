@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Zen.Domain.Auditing;
 using Zen.Domain.Outbox;
-using Zen.Domain.Utilities;
 using Zen.Infrastructure.Data.Extensions;
 using Zen.Infrastructure.Data.Security;
 

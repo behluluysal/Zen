@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Zen.Application.Dtos;
-using Zen.Domain.Utilities;
+using Zen.Domain.Auditing;
 using Zen.Services.Coupon.Application.Dtos;
 
 namespace Zen.Services.Coupon.Application.Mappings;

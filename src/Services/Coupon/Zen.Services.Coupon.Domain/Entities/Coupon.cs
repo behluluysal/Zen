@@ -1,11 +1,12 @@
-﻿using Zen.Domain;
-using Zen.Domain.Utilities;
+﻿using System.Text.Json.Serialization;
+using Zen.Domain.Aggregates;
+using Zen.Domain.Attributes;
+using Zen.Domain.Common;
 using Zen.Services.Coupon.Domain.Events;
-using Newtonsoft.Json;
 
 namespace Zen.Services.Coupon.Domain.Entities;
 
-public class Coupon : AggregateRoot, IIdentifiable<string>, IConcurrencyAware, IAuditable, IHasAuditHistory<AuditHistoryRecord>
+public class Coupon : AggregateRoot, IIdentifiable<string>, IConcurrencyAware, IAuditable
 {
     public string Id { get; private set; }
     public string Code { get; set; }
@@ -19,9 +20,6 @@ public class Coupon : AggregateRoot, IIdentifiable<string>, IConcurrencyAware, I
     public DateTime CreatedDate { get; private set; }
     public string? UpdatedBy { get; private set; }
     public DateTime? UpdatedDate { get; private set; }
-
-    [JsonIgnore]
-    public virtual ICollection<AuditHistoryRecord> AuditHistories { get; set; } = [];
 
     public Coupon(string code, decimal discount, DateTime expiration, string createdBy, bool raiseEvent = true)
     {

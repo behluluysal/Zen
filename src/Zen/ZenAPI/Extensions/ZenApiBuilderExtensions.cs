@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System.ComponentModel.DataAnnotations;
-using Zen.Application.Utilities.Context;
+using Zen.Application.Common.Interfaces;
 using Zen.Infrastructure.BackgroundJobs;
 using Zen.Infrastructure.Data;
 

@@ -1,8 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Reflection;
-using Zen.Domain;
+using Zen.Domain.Attributes;
+using Zen.Domain.Auditing;
+using Zen.Domain.Common;
 using Zen.Domain.Outbox;
-using Zen.Domain.Utilities;
 using Zen.Infrastructure.Data.Security;
 
 namespace Zen.Infrastructure.Data.Extensions;

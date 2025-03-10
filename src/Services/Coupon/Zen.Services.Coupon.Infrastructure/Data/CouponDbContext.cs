@@ -1,10 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Zen.Domain.Utilities;
+using Zen.Domain.Auditing;
 using Zen.Infrastructure.Data;
+using Zen.Services.Coupon.Application;
 
 namespace Zen.Services.Coupon.Infrastructure.Data;
 
-public class CouponDbContext(DbContextOptions<CouponDbContext> options) : ZenDbContext(options)
+public class CouponDbContext(DbContextOptions<CouponDbContext> options) : ZenDbContext(options), ICouponDbContext
 {
     public DbSet<Domain.Entities.Coupon> Coupons { get; set; }
 
@@ -20,7 +21,7 @@ public class CouponDbContext(DbContextOptions<CouponDbContext> options) : ZenDbC
         modelBuilder.Entity<AuditHistoryRecord>(entity =>
         {
             entity.HasOne<Domain.Entities.Coupon>()
-                  .WithMany(c => c.AuditHistories)
+                  .WithMany()
                   .HasForeignKey(a => a.EntityId)
                   .HasPrincipalKey(c => c.Id)
                   .OnDelete(DeleteBehavior.Cascade);

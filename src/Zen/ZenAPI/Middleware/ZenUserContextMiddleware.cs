@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using System.Security.Claims;
-using Zen.Application.Utilities.Context;
+using Zen.Application.Common.Interfaces;
 
 namespace Zen.API.Middleware;
 
