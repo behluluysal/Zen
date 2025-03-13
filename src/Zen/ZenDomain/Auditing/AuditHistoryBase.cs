@@ -16,7 +16,7 @@ public abstract class AuditHistoryBase
 
     public AuditOperation Operation { get; set; }
 
-    public DateTime Timestamp { get; set; } = DateTime.UtcNow;
+    public DateTimeOffset Timestamp { get; set; } = DateTimeOffset.UtcNow;
 
     public required string Snapshot { get; set; }
 

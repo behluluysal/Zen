@@ -49,8 +49,8 @@ public class ProcessOutboxMessagesJob<TContext>(IDbContextFactory<TContext> dbCo
             }
 
             outboxMessage.RetryCount++;
-
-            if (JsonSerializer.Deserialize(outboxMessage.Content, eventType) is not IDomainEvent domainEvent)
+            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            if (JsonSerializer.Deserialize(outboxMessage.Content, eventType, options) is not IDomainEvent domainEvent)
             {
                 _logger.LogError(new Exception("Deserialization Error"),
                     "Couldn't deserialize message with ID: {MessageId}. It's like trying to read a book in the dark.", outboxMessage.Id);
@@ -60,7 +60,7 @@ public class ProcessOutboxMessagesJob<TContext>(IDbContextFactory<TContext> dbCo
             try
             {
                 await _publisher.Publish(domainEvent);
-                outboxMessage.ProcessedOnUtc = DateTime.UtcNow;
+                outboxMessage.ProcessedOnUtc = DateTimeOffset.UtcNow;
             }
             catch (Exception ex)
             {

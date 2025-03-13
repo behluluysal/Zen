@@ -1,15 +1,16 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Zen.Application.Common.Interfaces;
+using Microsoft.Extensions.Logging;
 using Zen.Application.Extensions;
 using Zen.Application.MediatR.Common;
 
 namespace Zen.Services.Coupon.Application.MediatR.Coupon;
 
-internal sealed class UpdateCouponCommandHandler(ICouponDbContext dbContext) 
-    : IRequestHandler<UpdateCouponCommand, ZenOperationResult>
+internal sealed class DeleteCouponCommandHandler(
+    ICouponDbContext dbContext,
+    ILogger<DeleteCouponCommandHandler> logger) : IRequestHandler<DeleteCouponCommand, ZenOperationResult>
 {
-    public async Task<ZenOperationResult> Handle(UpdateCouponCommand request, CancellationToken cancellationToken)
+    public async Task<ZenOperationResult> Handle(DeleteCouponCommand request, CancellationToken cancellationToken)
     {
         var coupon = await dbContext.Coupons
             .ExcludeDeleted()
@@ -22,16 +23,18 @@ internal sealed class UpdateCouponCommandHandler(ICouponDbContext dbContext)
 
         try
         {
-            coupon.Update(request.Code, request.Discount, request.Expiration);
+            coupon.SoftDelete();
 
             byte[] originalRowVersion = Convert.FromBase64String(request.RowVersion);
             var entry = dbContext.Coupons.Entry(coupon);
             entry.Property("RowVersion").OriginalValue = originalRowVersion;
             entry.State = EntityState.Modified;
+
             await dbContext.SaveChangesAsync(cancellationToken);
 
-            return ZenOperationResult.Success();
+            logger.LogInformation("Coupon with Id {Id} soft-deleted successfully.", coupon.Id);
 
+            return ZenOperationResult.Success();
         }
         catch (DbUpdateConcurrencyException)
         {
@@ -39,3 +42,4 @@ internal sealed class UpdateCouponCommandHandler(ICouponDbContext dbContext)
         }
     }
 }
+

@@ -5,10 +5,12 @@ using Zen.Services.Coupon.Application.Dtos;
 
 namespace Zen.Services.Coupon.Application.MediatR.Coupon;
 
-public record CreateCouponCommand(string Code, decimal Discount, DateTime Expiration)
+public record CreateCouponCommand(string Code, decimal Discount, DateTimeOffset Expiration)
        : IRequest<ZenOperationResult<string>>;
 
-public record UpdateCouponCommand(string Id, string Code, decimal Discount, DateTime Expiration, string RowVersion) : IRequest<ZenOperationResult>;
+public record UpdateCouponCommand(string Id, string Code, decimal Discount, DateTimeOffset Expiration, string RowVersion) : IRequest<ZenOperationResult>;
+
+public record DeleteCouponCommand(string Id, string RowVersion) : IRequest<ZenOperationResult>;
 
 
 // Queries

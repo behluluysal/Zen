@@ -56,10 +56,13 @@ public static class InfrastructureServiceBuilder
         var encryptionService = builder.Services.BuildServiceProvider().GetRequiredService<IColumnEncryptionService>();
         ZenDbContext.StaticColumnEncryptionService = encryptionService;
 
-        builder.Services.AddSingleton<ISaveChangesInterceptor, ConvertDomainEventsToOutboxMessagesInterceptor>();
+        builder.Services.AddScoped<ISaveChangesInterceptor, AuditableEntityInterceptor>();
+        builder.Services.AddScoped<ISaveChangesInterceptor, ConvertDomainEventsToOutboxMessagesInterceptor>();
 
         var connectionString = builder.Configuration.GetConnectionString(options.AspireDbName);
-        Guard.Against.Null(connectionString, message: $"Connection string '{options.AspireDbName}' not found.");
+        // comment below when adding migrations.
+        //Guard.Against.Null(connectionString, message: $"Connection string '{options.AspireDbName}' not found. If you are adding migrations, " +
+        //    $"comment out the Guard.Against.Null in InfrastructureBuilder.");
 
         builder.Services.AddDbContext<TDbContext>((sp, opt) =>
         {
@@ -71,13 +74,9 @@ public static class InfrastructureServiceBuilder
 
         });
 
-        builder.Services.AddDbContextFactory<TDbContext>((sp, opt) =>
+        builder.Services.AddDbContextFactory<TDbContext>(opt =>
         {
-            opt.AddInterceptors(sp.GetServices<ISaveChangesInterceptor>());
-            opt.UseSqlServer(sqlOptions =>
-            {
-                sqlOptions.MigrationsAssembly(options.Assembly);
-            });
+            opt.UseSqlServer(connectionString);
         }, ServiceLifetime.Scoped);
     }
 

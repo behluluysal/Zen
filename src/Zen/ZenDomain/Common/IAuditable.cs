@@ -6,7 +6,7 @@
 public interface IAuditable
 {
     string CreatedBy { get; }
-    DateTime CreatedDate { get; }
+    DateTimeOffset CreatedDate { get; }
     string? UpdatedBy { get; }
-    DateTime? UpdatedDate { get; }
+    DateTimeOffset? UpdatedDate { get; }
 }

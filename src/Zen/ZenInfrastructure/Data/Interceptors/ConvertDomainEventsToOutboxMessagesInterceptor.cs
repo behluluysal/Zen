@@ -6,7 +6,7 @@ using Zen.Domain.Outbox;
 
 namespace Zen.Infrastructure.Data.Interceptors;
 
-public sealed class ConvertDomainEventsToOutboxMessagesInterceptor
+internal sealed class ConvertDomainEventsToOutboxMessagesInterceptor
     : SaveChangesInterceptor
 {
     public override InterceptionResult<int> SavingChanges(DbContextEventData eventData, InterceptionResult<int> result)
@@ -34,7 +34,7 @@ public sealed class ConvertDomainEventsToOutboxMessagesInterceptor
         }
 
         var outboxMessages = dbContext.ChangeTracker
-            .Entries<AggregateRoot>()
+            .Entries<IAggregateMember>()
             .Select(x => x.Entity)
             .SelectMany(aggregateRoot =>
             {
@@ -44,7 +44,7 @@ public sealed class ConvertDomainEventsToOutboxMessagesInterceptor
             })
             .Select(domainEvent => new OutboxMessage
             {
-                OccurredOnUtc = DateTime.UtcNow,
+                OccurredOnUtc = DateTimeOffset.UtcNow,
                 Type = domainEvent.GetType().AssemblyQualifiedName ?? string.Empty,
                 Content = JsonSerializer.Serialize(domainEvent, domainEvent.GetType())
             })

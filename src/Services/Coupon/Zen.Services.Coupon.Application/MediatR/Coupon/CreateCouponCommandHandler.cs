@@ -1,18 +1,18 @@
 ﻿using AutoMapper;
 using MediatR;
-using Zen.Application.Common.Interfaces;
 using Zen.Application.MediatR.Common;
 using Zen.Services.Coupon.Application.Dtos;
+using Zen.Services.Coupon.Domain.Entities.CouponAggregate;
+using Zen.Services.Coupon.Domain.Events;
 
 namespace Zen.Services.Coupon.Application.MediatR.Coupon;
 
 internal sealed class CreateCouponCommandHandler(ICouponDbContext dbContext,
-                                  IMapper mapper,
-                                  IZenUserContext userContext) : IRequestHandler<CreateCouponCommand, ZenOperationResult<string>>
+                                  IMapper mapper) : IRequestHandler<CreateCouponCommand, ZenOperationResult<string>>
 {
     public async Task<ZenOperationResult<string>> Handle(CreateCouponCommand request, CancellationToken cancellationToken)
     {
-        var coupon = new Domain.Entities.Coupon(request.Code, request.Discount, request.Expiration, userContext.UserId);
+        var coupon = new Domain.Entities.CouponAggregate.Coupon(request.Code, request.Discount, request.Expiration);
 
         await dbContext.Coupons.AddAsync(coupon, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);

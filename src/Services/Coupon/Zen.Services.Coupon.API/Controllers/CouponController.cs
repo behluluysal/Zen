@@ -40,6 +40,15 @@ public class CouponController(IMediator mediator) : ControllerBase
         return result.ToNoContent(this);
     }
 
+    [HttpDelete("{id}")]
+    public async Task<ActionResult<ZenApiResponse>> DeleteCoupon(string id, [FromHeader(Name = "If-Match")] string rowVersion)
+    {
+        var command = new DeleteCouponCommand(id, rowVersion);
+        var result = await _mediator.Send(command);
+
+        return result.ToNoContent(this);
+    }
+
     [HttpGet("{couponId}/histories")]
     public async Task<ActionResult<ZenApiResponse<IEnumerable<AuditHistoryRecordDto>>>> GetCouponHistories(string couponId)
     {

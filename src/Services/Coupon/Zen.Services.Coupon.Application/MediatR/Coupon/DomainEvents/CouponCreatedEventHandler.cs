@@ -17,7 +17,7 @@ internal sealed class CouponCreatedEventHandler(
         {
             EntityId = domainEvent.Coupon.Id,
             Operation = AuditOperation.Insert,
-            Timestamp = DateTime.UtcNow,
+            Timestamp = domainEvent.Coupon.CreatedDate,
             Snapshot = JsonSerializer.Serialize(domainEvent.Coupon),
             ChangedBy = domainEvent.Coupon.CreatedBy
         };

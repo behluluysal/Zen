@@ -15,7 +15,7 @@ public class CreateCouponCommandValidator : AbstractValidator<CreateCouponComman
             .GreaterThan(0).WithMessage("Discount must be greater than 0.");
 
         RuleFor(x => x.Expiration)
-            .GreaterThanOrEqualTo(DateTime.UtcNow)
+            .GreaterThanOrEqualTo(DateTimeOffset.UtcNow)
             .WithMessage("Expiration date must be in the future.");
     }
 }

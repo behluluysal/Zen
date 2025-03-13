@@ -10,6 +10,7 @@ public class CouponDto : IConcurrencyAwareDto
     public string Id { get; set; } = string.Empty;
     public string Code { get; set; } = string.Empty;
     public decimal Discount { get; set; }
-    public DateTime Expiration { get; set; }
+    public DateTimeOffset Expiration { get; set; }
     public string RowVersion { get; set; } = string.Empty;
+    public bool IsDeleted { get; set; }
 }
