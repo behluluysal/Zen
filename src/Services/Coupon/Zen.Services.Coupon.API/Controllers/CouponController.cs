@@ -15,6 +15,7 @@ public class CouponController(IMediator mediator) : ControllerBase
     private readonly IMediator _mediator = mediator;
 
     [HttpPost]
+    [ProducesResponseType(typeof(ZenApiResponse<string>), StatusCodes.Status201Created)]
     public async Task<ActionResult<ZenApiResponse<string>>> CreateCoupon([FromBody] CreateCouponCommand command)
     {
         var operationResult = await _mediator.Send(command);
@@ -22,6 +23,8 @@ public class CouponController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet("{couponId}")]
+    [ProducesResponseType(typeof(ZenApiResponse<CouponDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ZenApiResponse<CouponDto>), StatusCodes.Status404NotFound)]
     public async Task<ActionResult<ZenApiResponse<CouponDto>>> GetCoupon(string couponId)
     {
         var result = await _mediator.Send(new GetCouponByIdQuery(couponId));
@@ -29,6 +32,10 @@ public class CouponController(IMediator mediator) : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [ProducesResponseType(typeof(ZenApiResponse), StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ZenApiResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ZenApiResponse), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ZenApiResponse), StatusCodes.Status409Conflict)]
     public async Task<ActionResult<ZenApiResponse>> UpdateCoupon(string id, [FromBody] UpdateCouponCommand command)
     {
         if (id != command.Id)
@@ -41,6 +48,9 @@ public class CouponController(IMediator mediator) : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [ProducesResponseType(typeof(ZenApiResponse), StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ZenApiResponse), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ZenApiResponse), StatusCodes.Status409Conflict)]
     public async Task<ActionResult<ZenApiResponse>> DeleteCoupon(string id, [FromHeader(Name = "If-Match")] string rowVersion)
     {
         var command = new DeleteCouponCommand(id, rowVersion);
@@ -50,6 +60,8 @@ public class CouponController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet("{couponId}/histories")]
+    [ProducesResponseType(typeof(ZenApiResponse<IEnumerable<AuditHistoryRecordDto>>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ZenApiResponse<IEnumerable<AuditHistoryRecordDto>>), StatusCodes.Status404NotFound)]
     public async Task<ActionResult<ZenApiResponse<IEnumerable<AuditHistoryRecordDto>>>> GetCouponHistories(string couponId)
     {
         var result = await _mediator.Send(new GetCouponHistoryQuery(couponId));

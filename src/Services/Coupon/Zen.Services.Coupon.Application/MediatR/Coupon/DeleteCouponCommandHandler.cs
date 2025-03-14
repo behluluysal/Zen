@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Net;
 using Zen.Application.Extensions;
 using Zen.Application.MediatR.Common;
 
@@ -18,7 +19,7 @@ internal sealed class DeleteCouponCommandHandler(
 
         if (coupon == null)
         {
-            return ZenOperationResult<string>.Failure(404, "Coupon not found.");
+            return ZenOperationResult<string>.Failure(HttpStatusCode.NotFound, "Coupon not found.");
         }
 
         try
@@ -38,7 +39,7 @@ internal sealed class DeleteCouponCommandHandler(
         }
         catch (DbUpdateConcurrencyException)
         {
-            return ZenOperationResult.Failure(409, "The coupon was updated by another process. Please reload and try again.");
+            return ZenOperationResult.Failure(HttpStatusCode.Conflict, "The coupon was updated by another process. Please reload and try again.");
         }
     }
 }

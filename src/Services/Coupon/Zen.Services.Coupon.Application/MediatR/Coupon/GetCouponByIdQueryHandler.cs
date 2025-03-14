@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Zen.Application.MediatR.Common;
 using Zen.Services.Coupon.Application.Dtos;
 using Zen.Application.Extensions;
+using System.Net;
 
 namespace Zen.Services.Coupon.Application.MediatR.Coupon;
 
@@ -17,7 +18,7 @@ internal sealed class GetCouponByIdQueryHandler(ICouponDbContext dbContext, IMap
             .FirstOrDefaultAsync(c => c.Id == request.CouponId, cancellationToken);
         if (coupon == null)
         {
-            return ZenOperationResult<CouponDto>.Failure(404, "Coupon not found");
+            return ZenOperationResult<CouponDto>.Failure(HttpStatusCode.NotFound, "Coupon not found");
         }
         var couponDto = mapper.Map<CouponDto>(coupon);
         return ZenOperationResult<CouponDto>.Success(couponDto);

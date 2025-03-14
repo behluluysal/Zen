@@ -45,7 +45,7 @@ public class GlobalExceptionHandlingMiddleware(RequestDelegate next, ILogger<Glo
             errorMessage = exception.Message;
         }
 
-        var response = new ZenApiResponse<object>(new(statusCode, errorMessage));
+        var response = ZenApiResponse<object>.Failure(statusCode, errorMessage);
 
         context.Response.ContentType = "application/json";
         context.Response.StatusCode = statusCode;

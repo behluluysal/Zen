@@ -52,8 +52,8 @@ public static class ApplicationServiceBuilder
             builder.Services.AddMediatR(cfg =>
             {
                 cfg.RegisterServicesFromAssembly(applicationAssembly);
+                cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ZenCommandActionBehavior<,>));
             });
-            builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ZenCommandActionBehavior<,>));
         }
 
         return builder;

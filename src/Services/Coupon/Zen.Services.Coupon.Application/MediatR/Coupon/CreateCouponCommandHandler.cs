@@ -2,8 +2,6 @@
 using MediatR;
 using Zen.Application.MediatR.Common;
 using Zen.Services.Coupon.Application.Dtos;
-using Zen.Services.Coupon.Domain.Entities.CouponAggregate;
-using Zen.Services.Coupon.Domain.Events;
 
 namespace Zen.Services.Coupon.Application.MediatR.Coupon;
 

@@ -1,4 +1,6 @@
-﻿namespace Zen.Application.MediatR.Common;
+﻿using System.Net;
+
+namespace Zen.Application.MediatR.Common;
 
 /// <summary>
 /// Standard operation result wrapper used by application services.
@@ -6,7 +8,7 @@
 public class ZenOperationResult
 {
     public bool IsSuccess { get; set; }
-    public int ErrorCode { get; set; }
+    public HttpStatusCode StatusCode { get; set; }
     public required string ErrorMessage { get; set; }
 
     public static ZenOperationResult Success() => new()
@@ -15,11 +17,11 @@ public class ZenOperationResult
         ErrorMessage = string.Empty
     };
 
-    public static ZenOperationResult Failure(int errorCode, string errorMessage) =>
+    public static ZenOperationResult Failure(HttpStatusCode statusCode, string errorMessage) =>
         new()
         {
             IsSuccess = false,
-            ErrorCode = errorCode,
+            StatusCode = statusCode,
             ErrorMessage = errorMessage
         };
 }
@@ -39,11 +41,11 @@ public class ZenOperationResult<T> : ZenOperationResult
             ErrorMessage = string.Empty
         };
 
-    public static new ZenOperationResult<T> Failure(int errorCode, string errorMessage) =>
+    public static new ZenOperationResult<T> Failure(HttpStatusCode statusCode, string errorMessage) =>
         new()
         {
             IsSuccess = false,
-            ErrorCode = errorCode,
+            StatusCode = statusCode,
             ErrorMessage = errorMessage,
             Data = default!
         };
