@@ -1,39 +1,38 @@
 ﻿namespace Zen.API.Models;
 
-public class ApiError(int code, string message)
+public class ApiError(string title, string message)
 {
-    public int Code { get; set; } = code;
+    public string Title { get; set; } = title;
     public string Message { get; set; } = message;
 }
 
 /// <summary>
-/// Generic response envelope for API operations.
+/// Non-generic Response for successful API calls.
 /// </summary>
-public class ZenApiResponse<T>
+public class ZenSuccessResponse
 {
-    public bool IsSuccess { get; set; }
-    public T? Data { get; set; }
-    public ApiError? Error { get; set; }
-
-    public static ZenApiResponse<T> Success(T data) =>
-        new()
-        { IsSuccess = true, Data = data };
-
-    public static ZenApiResponse<T> Failure(int errorCode, string errorMessage) =>
-        new()
-        { IsSuccess = false, Error = new ApiError(errorCode, errorMessage) };
 }
 
 /// <summary>
-/// Non-generic response envelope.
+/// Response for successful API calls.
 /// </summary>
-public class ZenApiResponse : ZenApiResponse<object>
+public class ZenSuccessResponse<T>(T data) : ZenSuccessResponse
 {
-    public static ZenApiResponse Success() =>
-        new()
-        { IsSuccess = true };
+    public T Data { get; set; } = data;
+}
 
-    public new static ZenApiResponse Failure(int errorCode, string errorMessage) =>
-        new()
-        { IsSuccess = false, Error = new ApiError(errorCode, errorMessage) };
+/// <summary>
+/// Response for general errors.
+/// </summary>
+public class ZenErrorResponse(string title, string message)
+{
+    public ApiError Error { get; set; } = new ApiError(title, message);
+}
+
+/// <summary>
+/// Response for validation errors.
+/// </summary>
+public class ZenValidationErrorResponse(string title, string message, IDictionary<string, string[]> validationErrors) : ZenErrorResponse(title, message)
+{
+    public IDictionary<string, string[]> ValidationErrors { get; set; } = validationErrors;
 }

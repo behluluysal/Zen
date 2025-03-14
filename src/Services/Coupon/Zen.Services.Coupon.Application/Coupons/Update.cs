@@ -1,16 +1,16 @@
-﻿using MediatR;
+﻿using Ardalis.Result;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
-using System.Net;
-using Zen.Application.Common.Interfaces;
-using Zen.Application.Extensions;
-using Zen.Application.MediatR.Common;
+using Zen.Application.Common.Extensions;
 
-namespace Zen.Services.Coupon.Application.MediatR.Coupon;
+namespace Zen.Services.Coupon.Application.Coupons;
 
-internal sealed class UpdateCouponCommandHandler(ICouponDbContext dbContext) 
-    : IRequestHandler<UpdateCouponCommand, ZenOperationResult>
+public record UpdateCouponCommand(string Id, string Code, decimal Discount, DateTimeOffset Expiration, string RowVersion) : IRequest<Result>;
+
+internal sealed class UpdateCouponCommandHandler(ICouponDbContext dbContext)
+    : IRequestHandler<UpdateCouponCommand, Result>
 {
-    public async Task<ZenOperationResult> Handle(UpdateCouponCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(UpdateCouponCommand request, CancellationToken cancellationToken)
     {
         var coupon = await dbContext.Coupons
             .ExcludeDeleted()
@@ -18,7 +18,7 @@ internal sealed class UpdateCouponCommandHandler(ICouponDbContext dbContext)
 
         if (coupon == null)
         {
-            return ZenOperationResult<string>.Failure(HttpStatusCode.NotFound, "Coupon not found.");
+            return Result.NotFound("Coupon not found.");
         }
 
         try
@@ -31,12 +31,12 @@ internal sealed class UpdateCouponCommandHandler(ICouponDbContext dbContext)
             entry.State = EntityState.Modified;
             await dbContext.SaveChangesAsync(cancellationToken);
 
-            return ZenOperationResult.Success();
+            return Result.Success();
 
         }
         catch (DbUpdateConcurrencyException)
         {
-            return ZenOperationResult.Failure(HttpStatusCode.Conflict, "The coupon was updated by another process. Please reload and try again.");
+            return Result.Conflict("The coupon was updated by another process. Please reload and try again.");
         }
     }
 }

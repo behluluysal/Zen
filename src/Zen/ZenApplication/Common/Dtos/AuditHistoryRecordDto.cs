@@ -1,4 +1,4 @@
-﻿namespace Zen.Application.Dtos;
+﻿namespace Zen.Application.Common.Dtos;
 
 /// <summary>
 /// Represents an audit history record.

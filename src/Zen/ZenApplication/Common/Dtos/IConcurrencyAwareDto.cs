@@ -1,4 +1,4 @@
-﻿namespace Zen.Application.Dtos;
+﻿namespace Zen.Application.Common.Dtos;
 
 public interface IConcurrencyAwareDto
 {

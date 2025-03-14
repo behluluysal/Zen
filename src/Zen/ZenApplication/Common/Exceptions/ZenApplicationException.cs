@@ -1,4 +1,4 @@
-﻿namespace Zen.Application.Exceptions;
+﻿namespace Zen.Application.Common.Exceptions;
 
 /// <summary>
 /// Represents a domain exception with an associated error code.

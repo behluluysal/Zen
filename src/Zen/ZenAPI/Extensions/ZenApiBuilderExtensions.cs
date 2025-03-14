@@ -1,4 +1,5 @@
-﻿using Hangfire;
+﻿using Ardalis.Result.AspNetCore;
+using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -53,7 +54,7 @@ public static class ZenApiBuilderExtensions
         var configuration = builder.Configuration;
         options.ConfigureLayers?.Invoke(configuration);
 
-        builder.Services.AddControllers();
+        builder.Services.AddControllers(mvcOptions => mvcOptions.AddDefaultResultConvention());
         // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
         builder.Services.AddOpenApi();
 

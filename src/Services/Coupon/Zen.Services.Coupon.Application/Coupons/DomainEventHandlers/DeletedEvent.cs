@@ -6,7 +6,7 @@ using Zen.Application.Common.Interfaces;
 using Zen.Domain.Auditing;
 using Zen.Services.Coupon.Domain.Events;
 
-namespace Zen.Services.Coupon.Application.MediatR.Coupon.DomainEvents;
+namespace Zen.Services.Coupon.Application.Coupons.DomainEventHandlers;
 
 internal sealed class CouponDeletedEventHandler(
     ILogger<CouponDeletedEventHandler> logger,

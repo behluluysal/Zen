@@ -34,7 +34,7 @@ public static class ZenApiPipelineExtensions
                 options.SwaggerEndpoint("/openapi/v1.json", "OpenAPI v1");
             });
         }
-
+        app.UseMiddleware<ZenExceptionHandlingMiddleware>();
         app.UseMiddleware<ZenUserContextMiddleware>();
 
         app.UseHttpsRedirection();

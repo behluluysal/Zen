@@ -52,7 +52,8 @@ public static class ApplicationServiceBuilder
             builder.Services.AddMediatR(cfg =>
             {
                 cfg.RegisterServicesFromAssembly(applicationAssembly);
-                cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ZenCommandActionBehavior<,>));
+                cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ZenValidationBehavior<,>));
+                cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ZenPerformanceBehaviour<,>));
             });
         }
 

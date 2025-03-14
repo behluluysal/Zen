@@ -1,6 +1,6 @@
 ﻿using Zen.Domain.Common;
 
-namespace Zen.Application.Extensions;
+namespace Zen.Application.Common.Extensions;
 
 public static class QueryableExtensions
 {

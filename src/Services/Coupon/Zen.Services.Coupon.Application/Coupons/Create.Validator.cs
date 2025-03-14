@@ -1,7 +1,6 @@
 ﻿using FluentValidation;
-using Zen.Services.Coupon.Application.MediatR.Coupon;
 
-namespace Zen.Services.Coupon.Application.Validators.Coupon;
+namespace Zen.Services.Coupon.Application.Coupons;
 
 public class CreateCouponCommandValidator : AbstractValidator<CreateCouponCommand>
 {
