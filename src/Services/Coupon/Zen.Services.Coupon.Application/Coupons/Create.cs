@@ -4,8 +4,6 @@ using MediatR;
 
 namespace Zen.Services.Coupon.Application.Coupons;
 
-public record CreateCouponCommand(string Code, decimal Discount, DateTimeOffset Expiration)
-       : IRequest<Result<string>>;
 
 internal sealed class CreateCouponCommandHandler(ICouponDbContext dbContext,
                                   IMapper mapper) : IRequestHandler<CreateCouponCommand, Result<string>>

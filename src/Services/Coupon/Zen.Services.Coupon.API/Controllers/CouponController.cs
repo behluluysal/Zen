@@ -16,9 +16,9 @@ public class CouponController(IMediator mediator) : ControllerBase
 
     [HttpPost]
     [ExpectedFailures(ResultStatus.Invalid)]
-    public async Task<Result<string>> CreateCoupon([FromBody] CreateCouponCommand command)
+    public async Task<Result<string>> CreateCoupon([FromBody] CreateCouponRequest request)
     {
-        return await _mediator.Send(command);
+        return await _mediator.Send(new CreateCouponCommand(request));
     }
 
     [HttpGet("{couponId}")]
@@ -31,18 +31,24 @@ public class CouponController(IMediator mediator) : ControllerBase
 
     [HttpPut("{id}")]
     [ExpectedFailures(ResultStatus.NotFound, ResultStatus.Invalid, ResultStatus.Conflict)]
-    public async Task<Result> UpdateCoupon(string id, [FromBody] UpdateCouponCommand command)
+    public async Task<Result> UpdateCoupon(string id, [FromHeader(Name = "If-Match")] string rowVersion, [FromBody] UpdateCouponRequest request)
     {
-        if (id != command.Id)
+        if (id != request.Id)
             return Result.Invalid(new ValidationError { Identifier = "Id", ErrorMessage = "URL id does not match command id." });
 
-        return await _mediator.Send(command);
+        if (string.IsNullOrWhiteSpace(rowVersion))
+            return Result.Invalid(new ValidationError { Identifier = "If-Match", ErrorMessage = "If-Match header is required." });
+
+        return await _mediator.Send(new UpdateCouponCommand(request, rowVersion));
     }
 
     [HttpDelete("{id}")]
     [ExpectedFailures(ResultStatus.NotFound, ResultStatus.Conflict)]
     public async Task<Result> DeleteCoupon(string id, [FromHeader(Name = "If-Match")] string rowVersion)
     {
+        if (string.IsNullOrWhiteSpace(rowVersion))
+            return Result.Invalid(new ValidationError { Identifier = "If-Match", ErrorMessage = "If-Match header is required." });
+
         return await _mediator.Send(new DeleteCouponCommand(id, rowVersion));
     }
 

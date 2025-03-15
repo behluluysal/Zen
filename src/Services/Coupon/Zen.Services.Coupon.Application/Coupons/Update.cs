@@ -5,8 +5,6 @@ using Zen.Application.Common.Extensions;
 
 namespace Zen.Services.Coupon.Application.Coupons;
 
-public record UpdateCouponCommand(string Id, string Code, decimal Discount, DateTimeOffset Expiration, string RowVersion) : IRequest<Result>;
-
 internal sealed class UpdateCouponCommandHandler(ICouponDbContext dbContext)
     : IRequestHandler<UpdateCouponCommand, Result>
 {
@@ -36,6 +34,7 @@ internal sealed class UpdateCouponCommandHandler(ICouponDbContext dbContext)
         }
         catch (DbUpdateConcurrencyException)
         {
+            // TODO, should we guard clause it or catch the exception???
             return Result.Conflict("The coupon was updated by another process. Please reload and try again.");
         }
     }

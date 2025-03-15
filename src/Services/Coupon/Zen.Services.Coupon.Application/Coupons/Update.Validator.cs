@@ -1,12 +1,14 @@
 ﻿using FluentValidation;
 using Microsoft.EntityFrameworkCore;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Zen.Services.Coupon.Application.Coupons;
 
-public class CreateCouponCommandValidator : AbstractValidator<CreateCouponCommand>
+public class UpdateCouponCommandValidator : AbstractValidator<UpdateCouponCommand>
 {
     private readonly ICouponDbContext _couponDbContext;
-    public CreateCouponCommandValidator(ICouponDbContext couponDbContext)
+
+    public UpdateCouponCommandValidator(ICouponDbContext couponDbContext)
     {
         _couponDbContext = couponDbContext;
 
@@ -23,9 +25,9 @@ public class CreateCouponCommandValidator : AbstractValidator<CreateCouponComman
             .WithMessage("Expiration date must be in the future.");
     }
 
-    private async Task<bool> CodeMustBeUniqueAsync(CreateCouponCommand command, string code, CancellationToken cancellationToken)
+    private async Task<bool> CodeMustBeUniqueAsync(UpdateCouponCommand command, string code, CancellationToken cancellationToken)
     {
         return !await _couponDbContext.Coupons
-            .AnyAsync(c => c.Code == code, cancellationToken);
+            .AnyAsync(c => c.Code == code && c.Id != command.Id, cancellationToken);
     }
 }
