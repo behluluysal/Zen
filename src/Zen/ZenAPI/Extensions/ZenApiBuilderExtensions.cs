@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System.ComponentModel.DataAnnotations;
+using Zen.API.Handlers;
 using Zen.Application.Common.Interfaces;
 using Zen.Infrastructure.BackgroundJobs;
 using Zen.Infrastructure.Data;
@@ -67,6 +68,8 @@ public static class ZenApiBuilderExtensions
                 .UseRecommendedSerializerSettings()
                 .UseInMemoryStorage())
             .AddHangfireServer();
+
+        builder.Services.AddExceptionHandler<ZenExceptionHandler>();
 
         return builder;
     }

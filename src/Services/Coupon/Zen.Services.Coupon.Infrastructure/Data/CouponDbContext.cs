@@ -1,11 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Zen.Domain.Auditing;
 using Zen.Infrastructure.Data;
 using Zen.Services.Coupon.Application;
 
 namespace Zen.Services.Coupon.Infrastructure.Data;
 
-public class CouponDbContext(DbContextOptions<CouponDbContext> options) : ZenDbContext(options), ICouponDbContext
+public class CouponDbContext(DbContextOptions<CouponDbContext> options, IOptions<ZenDbContextOptions> zenOptions) : ZenDbContext(options, zenOptions), ICouponDbContext
 {
     public DbSet<Domain.Entities.CouponAggregate.Coupon> Coupons { get; set; }
 

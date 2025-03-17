@@ -50,19 +50,18 @@ public static class InfrastructureServiceBuilder
 
     private static void ConfigureDatabase<TDbContext>(this IHostApplicationBuilder builder, InfrastructureSetupOptions options) where TDbContext : DbContext, IZenDbContext
     {
-        builder.Services.AddSingleton<IColumnEncryptionService>(sp =>
-               new AesColumnEncryptionService(options.ColumnHashingSecret));
-
-        var encryptionService = builder.Services.BuildServiceProvider().GetRequiredService<IColumnEncryptionService>();
-        ZenDbContext.StaticColumnEncryptionService = encryptionService;
-
         builder.Services.AddScoped<ISaveChangesInterceptor, AuditableEntityInterceptor>();
         builder.Services.AddScoped<ISaveChangesInterceptor, ConvertDomainEventsToOutboxMessagesInterceptor>();
 
         var connectionString = builder.Configuration.GetConnectionString(options.AspireDbName);
         // comment below when adding migrations.
-        //Guard.Against.Null(connectionString, message: $"Connection string '{options.AspireDbName}' not found. If you are adding migrations, " +
-        //    $"comment out the Guard.Against.Null in InfrastructureBuilder.");
+        Guard.Against.Null(connectionString, message: $"Connection string '{options.AspireDbName}' not found. If you are adding migrations, " +
+            $"comment out the Guard.Against.Null in InfrastructureBuilder.");
+
+        builder.Services.Configure<ZenDbContextOptions>(opt =>
+        {
+            opt.ColumnEncryptionService = new AesColumnEncryptionService(options.ColumnHashingSecret);
+        });
 
         builder.Services.AddDbContext<TDbContext>((sp, opt) =>
         {
