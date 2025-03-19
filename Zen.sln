@@ -34,6 +34,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zen.Services.Coupon.Infrast
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zen.Services.Coupon.API", "src\Services\Coupon\Zen.Services.Coupon.API\Zen.Services.Coupon.API.csproj", "{63F0C573-BCEC-4E38-947D-FCE1B7FD34B2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zen.Services.Sso.Domain", "src\Services\Sso\Zen.Services.Sso.Domain\Zen.Services.Sso.Domain.csproj", "{DB2F82DA-BBDA-4C8B-99C2-F70932F99078}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zen.Services.Sso.Application", "src\Services\Sso\Zen.Services.Sso.Application\Zen.Services.Sso.Application.csproj", "{747CC8B2-B5A2-4329-9001-524CD781EA03}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zen.Services.Sso.Infrastructure", "src\Services\Sso\Zen.Services.Sso.Infrastructure\Zen.Services.Sso.Infrastructure.csproj", "{BC1E1E83-5B8F-4620-A9F1-DEF59E17A0B8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zen.Services.Sso.API", "src\Services\Sso\Zen.Services.Sso.API\Zen.Services.Sso.API.csproj", "{83BD4E3B-DEEE-4ADA-BE49-0AD220EFD95C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -80,6 +88,22 @@ Global
 		{63F0C573-BCEC-4E38-947D-FCE1B7FD34B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{63F0C573-BCEC-4E38-947D-FCE1B7FD34B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{63F0C573-BCEC-4E38-947D-FCE1B7FD34B2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DB2F82DA-BBDA-4C8B-99C2-F70932F99078}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB2F82DA-BBDA-4C8B-99C2-F70932F99078}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB2F82DA-BBDA-4C8B-99C2-F70932F99078}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB2F82DA-BBDA-4C8B-99C2-F70932F99078}.Release|Any CPU.Build.0 = Release|Any CPU
+		{747CC8B2-B5A2-4329-9001-524CD781EA03}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{747CC8B2-B5A2-4329-9001-524CD781EA03}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{747CC8B2-B5A2-4329-9001-524CD781EA03}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{747CC8B2-B5A2-4329-9001-524CD781EA03}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BC1E1E83-5B8F-4620-A9F1-DEF59E17A0B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC1E1E83-5B8F-4620-A9F1-DEF59E17A0B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC1E1E83-5B8F-4620-A9F1-DEF59E17A0B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC1E1E83-5B8F-4620-A9F1-DEF59E17A0B8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{83BD4E3B-DEEE-4ADA-BE49-0AD220EFD95C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{83BD4E3B-DEEE-4ADA-BE49-0AD220EFD95C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{83BD4E3B-DEEE-4ADA-BE49-0AD220EFD95C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{83BD4E3B-DEEE-4ADA-BE49-0AD220EFD95C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -100,5 +124,9 @@ Global
 		{A8E2FBB4-B987-4B3F-B810-3883446042D0} = {B1383EF6-E9B7-47C8-B015-CEE6C7EC1A54}
 		{9517A94D-FCE6-444B-A31F-EF5D8DDADC7D} = {B1383EF6-E9B7-47C8-B015-CEE6C7EC1A54}
 		{63F0C573-BCEC-4E38-947D-FCE1B7FD34B2} = {B1383EF6-E9B7-47C8-B015-CEE6C7EC1A54}
+		{DB2F82DA-BBDA-4C8B-99C2-F70932F99078} = {EBB5E66A-CCF6-49FB-A7A4-D0ED1FE38342}
+		{747CC8B2-B5A2-4329-9001-524CD781EA03} = {EBB5E66A-CCF6-49FB-A7A4-D0ED1FE38342}
+		{BC1E1E83-5B8F-4620-A9F1-DEF59E17A0B8} = {EBB5E66A-CCF6-49FB-A7A4-D0ED1FE38342}
+		{83BD4E3B-DEEE-4ADA-BE49-0AD220EFD95C} = {EBB5E66A-CCF6-49FB-A7A4-D0ED1FE38342}
 	EndGlobalSection
 EndGlobal

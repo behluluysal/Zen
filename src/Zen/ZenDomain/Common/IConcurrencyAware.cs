@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace Zen.Domain.Common;
 
@@ -8,5 +9,6 @@ namespace Zen.Domain.Common;
 public interface IConcurrencyAware
 {
     [Timestamp]
-    byte[]? RowVersion { get; set; }
+    [JsonIgnore]
+    byte[]? RowVersion { get; }
 }

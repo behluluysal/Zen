@@ -13,11 +13,11 @@ internal sealed class DeleteCouponCommandHandler(
     ICouponDbContext dbContext,
     ILogger<DeleteCouponCommandHandler> logger) : IRequestHandler<DeleteCouponCommand, Result>
 {
-    public async Task<Result> Handle(DeleteCouponCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(DeleteCouponCommand command, CancellationToken cancellationToken)
     {
         var coupon = await dbContext.Coupons
             .ExcludeDeleted()
-            .FirstOrDefaultAsync(c => c.Id == request.Id, cancellationToken);
+            .FirstOrDefaultAsync(c => c.Id == command.Id, cancellationToken);
 
         if (coupon == null)
         {
@@ -28,7 +28,7 @@ internal sealed class DeleteCouponCommandHandler(
         {
             coupon.SoftDelete();
 
-            byte[] originalRowVersion = Convert.FromBase64String(request.RowVersion);
+            byte[] originalRowVersion = Convert.FromBase64String(command.RowVersion);
             var entry = dbContext.Coupons.Entry(coupon);
             entry.Property("RowVersion").OriginalValue = originalRowVersion;
             entry.State = EntityState.Modified;

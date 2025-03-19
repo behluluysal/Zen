@@ -1,11 +1,13 @@
 ﻿using Ardalis.GuardClauses;
 using FluentValidation;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Zen.Application.Common.Interfaces;
+using Zen.Domain.Aggregates;
 using Zen.Infrastructure.Data;
 using Zen.Infrastructure.Data.Interceptors;
 using Zen.Infrastructure.Data.Security;
@@ -18,6 +20,7 @@ public class InfrastructureSetupOptions
     public string Assembly { get; set; } = string.Empty;
     public string AspireDbName { get; set; } = string.Empty;
     public string ColumnHashingSecret { get; set; } = string.Empty;
+    public bool IsAuthenticationService { get; set; } = false;
 }
 
 public static class InfrastructureServiceBuilder
@@ -45,18 +48,45 @@ public static class InfrastructureServiceBuilder
 
         builder.ConfigureDatabase<TDbContext>(options);
 
+        builder.Services.AddAuthentication()
+            .AddBearerToken(IdentityConstants.BearerScheme);
+
+        builder.Services.AddAuthorizationBuilder();
+
+        builder.Services.AddHttpContextAccessor();
+
         return builder;
     }
 
+    public static IHostApplicationBuilder AddZenInfrastructure<TDbContext, TUser>(
+        this IHostApplicationBuilder builder,
+        Action<InfrastructureSetupOptions> configureOptions) 
+        where TDbContext : DbContext, IZenDbContext
+        where TUser : ZenUser
+    {
+        AddZenInfrastructure<TDbContext>(builder, configureOptions);
+
+        builder.Services
+            .AddIdentityCore<TUser>(identityOptions =>
+            {
+                identityOptions.Password.RequireDigit = true;
+                identityOptions.Password.RequiredLength = 6;
+                identityOptions.Lockout.AllowedForNewUsers = true;
+            })
+            .AddRoles<IdentityRole>()
+            .AddEntityFrameworkStores<TDbContext>()
+            .AddApiEndpoints();
+
+        builder.Services.AddScoped<UserManager<TUser>>();
+        builder.Services.AddScoped<RoleManager<IdentityRole>>();
+        return builder;
+    }
     private static void ConfigureDatabase<TDbContext>(this IHostApplicationBuilder builder, InfrastructureSetupOptions options) where TDbContext : DbContext, IZenDbContext
     {
         builder.Services.AddScoped<ISaveChangesInterceptor, AuditableEntityInterceptor>();
         builder.Services.AddScoped<ISaveChangesInterceptor, ConvertDomainEventsToOutboxMessagesInterceptor>();
 
         var connectionString = builder.Configuration.GetConnectionString(options.AspireDbName);
-        // comment below when adding migrations.
-        Guard.Against.Null(connectionString, message: $"Connection string '{options.AspireDbName}' not found. If you are adding migrations, " +
-            $"comment out the Guard.Against.Null in InfrastructureBuilder.");
 
         builder.Services.Configure<ZenDbContextOptions>(opt =>
         {

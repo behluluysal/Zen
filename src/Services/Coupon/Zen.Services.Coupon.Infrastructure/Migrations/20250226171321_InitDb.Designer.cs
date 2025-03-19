@@ -25,7 +25,7 @@ namespace Zen.Services.Coupon.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Zen.Services.Coupon.Domain.Entities.Coupon", b =>
+            modelBuilder.Entity("Zen.Services.Coupon.Domain.CouponAggregate.Coupon", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");

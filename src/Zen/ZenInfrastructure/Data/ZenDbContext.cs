@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Zen.Domain.Auditing;
@@ -37,7 +38,10 @@ public abstract class ZenDbContext(DbContextOptions options, IOptions<ZenDbConte
 /// such as encryption for sensitive properties and optimistic concurrency support.
 /// Microservices handling authentication can inherit from this context.
 /// </summary>
-public abstract class ZenIdentityDbContext(DbContextOptions options, IOptions<ZenDbContextOptions> zenOptions) : IdentityDbContext(options), IZenDbContext
+/// <typeparam name="TUser">The type of the user entity, which must inherit from <see cref="IdentityUser"/>.</typeparam>
+public abstract class ZenIdentityDbContext<TUser>(DbContextOptions options, IOptions<ZenDbContextOptions> zenOptions)
+    : IdentityDbContext<TUser, IdentityRole, string>(options), IZenDbContext
+    where TUser : IdentityUser
 {
     private readonly ZenDbContextOptions _zenOptions = zenOptions.Value;
     public DbSet<OutboxMessage> OutboxMessages { get; set; }

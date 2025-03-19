@@ -82,7 +82,7 @@ namespace Zen.Services.Coupon.Infrastructure.Migrations
                     b.ToTable("OutboxMessages");
                 });
 
-            modelBuilder.Entity("Zen.Services.Coupon.Domain.Entities.Coupon", b =>
+            modelBuilder.Entity("Zen.Services.Coupon.Domain.CouponAggregate.Coupon", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -126,7 +126,7 @@ namespace Zen.Services.Coupon.Infrastructure.Migrations
 
             modelBuilder.Entity("Zen.Domain.Auditing.AuditHistoryRecord", b =>
                 {
-                    b.HasOne("Zen.Services.Coupon.Domain.Entities.Coupon", null)
+                    b.HasOne("Zen.Services.Coupon.Domain.CouponAggregate.Coupon", null)
                         .WithMany()
                         .HasForeignKey("EntityId")
                         .OnDelete(DeleteBehavior.Cascade)

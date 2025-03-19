@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Services\Coupon\Zen.Services.Coupon.API\Zen.Services.Coupon.API.csproj" />
+    <ProjectReference Include="..\..\Services\Sso\Zen.Services.Sso.API\Zen.Services.Sso.API.csproj" />
   </ItemGroup>
 
 </Project>

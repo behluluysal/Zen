@@ -2,21 +2,20 @@
 using Zen.Domain.Aggregates;
 using Zen.Domain.Attributes;
 using Zen.Domain.Common;
-using Zen.Services.Coupon.Domain.Events;
 
-namespace Zen.Services.Coupon.Domain.Entities.CouponAggregate;
+namespace Zen.Services.Coupon.Domain.CouponAggregate;
 
 public class Coupon : AuditableAggregateRoot, IConcurrencyAware, ISoftDeletable
 {
-    public string Code { get; set; }
+    public string Code { get; private set; }
 
     [Encrypted]
-    public decimal Discount { get; set; }
-    public DateTimeOffset Expiration { get; set; }
-    public byte[]? RowVersion { get; set; }
+    public decimal Discount { get; private set; }
+    public DateTimeOffset Expiration { get; private set; }
+    public byte[]? RowVersion { get; private set; }
 
 
-    public bool IsDeleted { get; set; }
+    public bool IsDeleted { get; private set; }
 
 
     public Coupon(string code, decimal discount, DateTimeOffset expiration)

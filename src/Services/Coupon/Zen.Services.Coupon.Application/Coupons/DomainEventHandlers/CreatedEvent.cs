@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 using System.Text.Json;
 using Zen.Application.Common.Interfaces;
 using Zen.Domain.Auditing;
-using Zen.Services.Coupon.Domain.Events;
+using Zen.Services.Coupon.Domain.CouponAggregate;
 
 namespace Zen.Services.Coupon.Application.Coupons.DomainEventHandlers;
 

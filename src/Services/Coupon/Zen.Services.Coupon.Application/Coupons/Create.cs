@@ -8,9 +8,9 @@ namespace Zen.Services.Coupon.Application.Coupons;
 internal sealed class CreateCouponCommandHandler(ICouponDbContext dbContext,
                                   IMapper mapper) : IRequestHandler<CreateCouponCommand, Result<string>>
 {
-    public async Task<Result<string>> Handle(CreateCouponCommand request, CancellationToken cancellationToken)
+    public async Task<Result<string>> Handle(CreateCouponCommand command, CancellationToken cancellationToken)
     {
-        var coupon = new Domain.Entities.CouponAggregate.Coupon(request.Code, request.Discount, request.Expiration);
+        var coupon = new Domain.CouponAggregate.Coupon(command.Code, command.Discount, command.Expiration);
 
         await dbContext.Coupons.AddAsync(coupon, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);

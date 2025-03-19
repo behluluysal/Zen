@@ -1,11 +1,16 @@
-﻿using Ardalis.Result.AspNetCore;
+﻿using Ardalis.Result;
+using Ardalis.Result.AspNetCore;
 using Hangfire;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System.ComponentModel.DataAnnotations;
+using System.Net;
+using System.Text;
 using Zen.API.Handlers;
 using Zen.Application.Common.Interfaces;
 using Zen.Infrastructure.BackgroundJobs;
@@ -55,7 +60,19 @@ public static class ZenApiBuilderExtensions
         var configuration = builder.Configuration;
         options.ConfigureLayers?.Invoke(configuration);
 
-        builder.Services.AddControllers(mvcOptions => mvcOptions.AddDefaultResultConvention());
+        builder.Services.AddControllers(mvcOptions => mvcOptions
+            .AddResultConvention(resultStatusMap => resultStatusMap
+                .AddDefaultMap()
+                .For(ResultStatus.Unauthorized, HttpStatusCode.Unauthorized, resultStatusOptions => resultStatusOptions
+                    .With(typeof(object), (ctrlr, result) => new
+                    {
+                        title = "Unauthorized.",
+                        detail = FormatErrors(result.Errors),
+                        status = 401
+                    }))
+            )
+        );
+
         // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
         builder.Services.AddOpenApi();
 
@@ -72,5 +89,15 @@ public static class ZenApiBuilderExtensions
         builder.Services.AddExceptionHandler<ZenExceptionHandler>();
 
         return builder;
+    }
+
+    private static string FormatErrors(IEnumerable<string> errors)
+    {
+        var stringBuilder = new StringBuilder("Next error(s) occurred:");
+        foreach (var error in errors)
+        {
+            stringBuilder.AppendLine($"* {error}");
+        }
+        return stringBuilder.ToString();
     }
 }

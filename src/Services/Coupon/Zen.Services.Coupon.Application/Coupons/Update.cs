@@ -8,11 +8,11 @@ namespace Zen.Services.Coupon.Application.Coupons;
 internal sealed class UpdateCouponCommandHandler(ICouponDbContext dbContext)
     : IRequestHandler<UpdateCouponCommand, Result>
 {
-    public async Task<Result> Handle(UpdateCouponCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(UpdateCouponCommand command, CancellationToken cancellationToken)
     {
         var coupon = await dbContext.Coupons
             .ExcludeDeleted()
-            .FirstOrDefaultAsync(c => c.Id == request.Id, cancellationToken);
+            .FirstOrDefaultAsync(c => c.Id == command.Id, cancellationToken);
 
         if (coupon == null)
         {
@@ -21,9 +21,9 @@ internal sealed class UpdateCouponCommandHandler(ICouponDbContext dbContext)
 
         try
         {
-            coupon.Update(request.Code, request.Discount, request.Expiration);
+            coupon.Update(command.Code, command.Discount, command.Expiration);
 
-            byte[] originalRowVersion = Convert.FromBase64String(request.RowVersion);
+            byte[] originalRowVersion = Convert.FromBase64String(command.RowVersion);
             var entry = dbContext.Coupons.Entry(coupon);
             entry.Property("RowVersion").OriginalValue = originalRowVersion;
             entry.State = EntityState.Modified;

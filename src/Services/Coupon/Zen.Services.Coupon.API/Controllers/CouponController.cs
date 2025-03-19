@@ -22,7 +22,6 @@ public class CouponController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet("{couponId}")]
-    [ProducesResponseType(typeof(CouponGetByIdResponse), StatusCodes.Status200OK)]
     [ExpectedFailures(ResultStatus.NotFound)]
     public async Task<Result<CouponGetByIdResponse>> GetCoupon(string couponId)
     {
